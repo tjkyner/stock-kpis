@@ -39,7 +39,49 @@ Further explanation of the `data` directory is warranted given the multiple subd
 
 ## Preprocessing
 ### Merging Data
+After obtaining both the fundamental data and share price history of a given company, the data needed to be merged into a single file for modeling purposes. To accomplish this, the income sheet, balance sheet, and cash flow statement data contained in the `data/simfin` directory was filtered to the targeted company and then concatenated.
+
+```python
+# Concatenating financials
+financials = pd.concat([income, balance, cashflow], axis=1).reset_index()
+```
+
+Since the fundamental data is released on a quarterly basis, merging in the price history required an asof merge via [`pandas.merge_asof`](https://pandas.pydata.org/pandas-docs/version/0.25.0/reference/api/pandas.merge_asof.html) which allowed for finding the closest price value for each report date of the fundamentals.
+
+```python
+# Merging in prices
+final_df = pd.merge_asof(left=financials,
+                         right=prices,
+                         left_on='Report Date', 
+                         right_on='Price Date', 
+                         direction='backward')
+```
+
 ### Handling Missing Values
+Certain fundamental data retrieved from SimFin was sparsely populated. As an example, the below image shows the `missingno.matrix()` function called on the balance sheet data for all companies.
+
+![Missing balance sheet data](images/balance_sheet_msno_matrix.png)
+
+Imputation is a somewhat risky methodology for this particular data, even with more advanced techniques such as iterative imputation. While not ideal, the safest route was to drop those columns which did not meet a certain minimum non-null threshold and then drop the remaining rows with null values thereafter. This threshold was set at 30 in order to ensure enough data was available for the model to work with. For context, when the fundamental data was filtered down to a specific company, there would typically be around 60-65 rows of data total. 
+
+```python
+for i, ticker in enumerate(snp_tickers):
+    # Loading in data
+    df = pd.read_csv(f'../data/merged_data/{ticker}_merged.csv')
+    
+    # Dropping columns below the threshold
+    threshold = 30
+    to_drop = [col for col in df.columns if df[col].isna().sum() > len(df) - threshold]
+    df = df.drop(columns=to_drop)
+    
+    # Dropping rows with remaining missing data
+    df = df.dropna()
+    
+    # Exporting dataframe
+    df.to_csv(f'../data/preprocessed_data/{ticker}_preprocessed.csv', index=False)
+```
+
+It is important to note that this process was done in a company-specific manner in order to preserve as much information as possible. As a result, certain features may have been dropped for Company A that were kept for Company B due to differences in the number of missing values for those particular companies.
 
 ## Modeling
 ### `XGBRFRegressor`
