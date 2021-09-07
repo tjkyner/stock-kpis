@@ -85,9 +85,41 @@ It is important to note that this process was done in a company-specific manner 
 
 ## Modeling
 ### `XGBRFRegressor`
+The XGBoost Random Forest Regressor was chosen as the model to use based on the following key attributes:
+- Resiliency to overfitting, outliers, and non-linear data
+- Lack of normalization requirements due to its rule-based approach
+- Parellelization allows for faster computation time
+- Handles high dimensionality of data with ease
+
 ### Hyperparameter Tuning
+The following hyperparameters were optimized using the `GridSearchCV` function from the `sklearn.model_selection` module.
+
+```python
+xgb_rf_params = {'max_depth': [4, 5, 6, 7, 8],
+                 'colsample_bylevel': [0.2, 0.5, 0.8],
+                 'colsample_bytree': [0.2, 0.5, 0.8],
+                 'gamma': [1, 25, 50],
+                 'learning_rate': [0.01, 0.05, 0.25, 0.50],
+                 'random_state': [42]}
+```
+
 ### Example Feature Importances
+An example of the feature importances values obtained from fitting a hyperparameter optimized `XGBRFRegressor` model to the data for Microsoft (MSFT) can be seen below.
+
+![Example feature importances](images/example_feature_importances.png)
+
 ### Exporting Models
+After running a test case on one ticker, a `for` loop was constructed to iterate over each ticker in the list of S&P 500 tickers and accomplish the following:
+- Read in the preprocessed .csv file to a dataframe from the `data/preprocessed` directory for the given ticker
+- Check for and handle rare errors such as `EmptyDataError` or `KeyError`
+- Fit a hyperparameter optimized `XGBRFRegressor` model to the data
+- Export the best performing estimator to the `models` directory with the following code:
+
+```python
+# Exporting model
+best = model.best_estimator_
+joblib.dump(best, f'../models/{ticker}_model.joblib')
+```
 
 ## Interactive Dashboard
 ### Overview Tab
