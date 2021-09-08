@@ -8,7 +8,7 @@ Traditional equity valuation models rely on some form of forecasting the evoluti
 ![Workflow](images/workflow.png)
 
 ### Data Sources
-Multiple data sources were used in order to complete this project. Initially, all fundamental data was downloaded in bulk directly from the SEC using their relatively new [EDGAR API](https://www.sec.gov/edgar/sec-api-documentation). However, due to lack of documentation, support, and missing values, this data was scrapped in favor of alternative sources of fundamental data such as [SimFin](https://simfin.com/). Historical pricing data and miscellaneous company information (website, business summary, etc.) was obtained from Yahoo! Finance via the [`yfinance`](https://github.com/ranaroussi/yfinance) package. Finally, the current S&P 500 constituents (as of late August 2021) was retrieved from the *[List of S&P 500 companies](https://en.wikipedia.org/wiki/List_of_S%26P_500_companies)* article on Wikipedia.
+Multiple data sources were used in order to complete this project. Initially, all fundamental data was downloaded in bulk directly from the SEC using their relatively new [EDGAR API](https://www.sec.gov/edgar/sec-api-documentation). However, due to lack of documentation, support, and missing values, this data was scrapped in favor of alternative sources of fundamental data such as [SimFin](https://simfin.com/). Historical pricing data and miscellaneous company information (website, business summary, etc.) was obtained from Yahoo! Finance via the [`yfinance`](https://github.com/ranaroussi/yfinance) package. Finally, the list of current S&P 500 constituents (as of late August 2021) was retrieved from the *[List of S&P 500 companies](https://en.wikipedia.org/wiki/List_of_S%26P_500_companies)* article on Wikipedia.
 
 ![Data sources](images/data_sources.png)
 
@@ -122,6 +122,28 @@ joblib.dump(best, f'../models/{ticker}_model.joblib')
 ```
 
 ## Interactive Dashboard
+### Running the Dashboard
+To run the dashboard, simply set the `ticker` variable in `app.ipynb` (under the `notebooks` directory) to a company in the S&P 500 and then run the notebook.
+
+```python
+ticker = 'AAPL'
+```
+
+The majority of the code in the `app.ipynb` notebook is responsible for loading in the proper saved model, fetching company information, and defining the layout of the dashboard. The following code at the end of the notebook is responsible for actually running the dashboard:
+
+```python
+db = ExplainerDashboard(explainer,
+                        tabs=[OverviewTab, FeaturesTab, SHAPTab],
+                        title='Stock KPIs',
+                        description='',
+                        bootstrap=dbc.themes.SANDSTONE,
+                        fluid=False,
+                        header_hide_download=True,
+                        hide_poweredby=True)
+
+db.run(port=8050)
+```
+
 ### Overview Tab
 The Overview tab provides basic information on the selected company along with a business summary and historical price chart.
 
