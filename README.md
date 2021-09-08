@@ -163,3 +163,9 @@ The following description of SHAP from its [repository](https://github.com/slund
 In essence, the SHAP values show how an individual feature impacted the results of the model.
 
 ![SHAP tab](images/shap_tab.png)
+
+## Future Improvements
+- Investigate enhanced preprocessing and modeling techniques for better results
+- Rank companies by specific fundamentals (e.g., which companies have the highest SHAP values for R&D?)
+- Include additional model analysis components either from the `explainerdashboard` library or custom-built
+- Allow for changing between companies directly within the dashboard (requires core code changes to the underlying `explainerdashboard` library)
