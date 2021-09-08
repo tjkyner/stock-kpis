@@ -123,5 +123,21 @@ joblib.dump(best, f'../models/{ticker}_model.joblib')
 
 ## Interactive Dashboard
 ### Overview Tab
+The Overview tab provides basic information on the selected company along with a business summary and historical price chart.
+
+![Overview tab](images/overview_tab.png)
+
 ### Features Tab
+The features tab allows for exploring the selected company's various fundamental data. 
+
+![Features tab](images/features_tab.png)
+
 ### SHAP Analysis Tab
+The SHAP Analysis tab contains fulfills the project's goal by detailing the relative importances of the various fundamental factors for the given company. 
+
+The following description of SHAP from its [repository](https://github.com/slundberg/shap) provides a brief explanation of the values:
+>SHAP (SHapley Additive exPlanations) is a game theoretic approach to explain the output of any machine learning model. It connects optimal credit allocation with local explanations using the classic Shapley values from game theory and their related extensions (see [papers](https://github.com/slundberg/shap#citations) for details and citations).
+
+In essence, the SHAP values show how an individual feature impacted the results of the model.
+
+![SHAP tab](images/shap_tab.png)
